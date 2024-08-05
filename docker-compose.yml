@@ -1,0 +1,29 @@
+services:
+  sql_server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql_server_container
+    environment:
+      SA_PASSWORD: "Sa@Pass.1234"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1000:1433"
+    networks:
+      - mynetwork
+
+  web:
+    build: .
+    container_name: django_container
+    volumes:
+      - .:/app
+    ports:
+      - "2000:8000"
+    depends_on:
+      - sql_server
+    environment:
+      - DJANGO_SETTINGS_MODULE=django_crud_api.settings
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
